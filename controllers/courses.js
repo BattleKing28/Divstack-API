@@ -70,6 +70,22 @@ exports.getCourse = asyncHandler(async (req, res, next) => {
 //@route    POST /api/v1/courses
 //@access   private
 exports.createCourse = asyncHandler(async (req, res, next) => {
+   //Add user id to req.body
+   req.body.user = req.user.id;
+
+   // Checking if publisher has an active course already
+   const publishedCourse = await Course.findOne({ user: req.user.id });
+
+   // Checking if logged in user is publisher or admin (admin can add multiple courses but publisher can only add one course)
+   if (publishedCourse && req.user.role !== 'admin') {
+      return next(
+         new ErrorResponse(
+            `The user with ID ${req.user.id} has a role of "${req.user.role}" and can only publish a single course`,
+            400
+         )
+      );
+   }
+
    const course = await Course.create(req.body);
 
    res.status(201).json({
