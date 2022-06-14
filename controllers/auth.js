@@ -3,13 +3,13 @@ const User = require('../models/User');
 const asyncHandler = require('../middleware/async');
 
 //@description Register a new user
-//@route POST /api/auth/register
+//@route POST /api/v1/auth/register
 //@access public
 exports.register = asyncHandler(async (req, res, next) => {
-   const { name, password, role } = req.body;
+   const { userName, password, role } = req.body;
 
    const user = await User.create({
-      name,
+      userName,
       password,
       role,
    });
@@ -18,18 +18,20 @@ exports.register = asyncHandler(async (req, res, next) => {
 });
 
 //@description Login a user
-//@route POST /api/auth/login
+//@route POST /api/v1/auth/login
 //@access public
 exports.login = asyncHandler(async (req, res, next) => {
-   const { name, password } = req.body;
+   const { userName, password } = req.body;
 
    //validation
-   if (!name || !password) {
-      return next(new ErrorResponse('Please add a name and a password', 400));
+   if (!userName || !password) {
+      return next(
+         new ErrorResponse('Please add a userName and a password', 400)
+      );
    }
 
    //check if user exists in database
-   const user = await User.findOne({ name }).select('+password');
+   const user = await User.findOne({ userName }).select('+password');
 
    if (!user) {
       return next(
@@ -68,10 +70,39 @@ const sendTokenResponse = (user, statusCode, res) => {
 };
 
 //@description GET current logged in user token
-//@route GET /api/auth/me
+//@route GET /api/v1/auth/me
 //@access private
 exports.getMe = asyncHandler(async (req, res, next) => {
    const user = await User.findById(req.user.id);
    const token = req.cookies.token;
    res.status(200).json({ success: true, data: user, token });
+});
+
+//@description UPDATE currently logged in user's details
+//@route PUT /api/v1/auth/updatedetails
+//@access private
+exports.updateDetails = asyncHandler(async (req, res, next) => {
+   const fieldsToUpdate = { userName: req.body.userName };
+   const user = await User.findByIdAndUpdate(req.user.id, fieldsToUpdate, {
+      new: true,
+      runValidators: true,
+   });
+   res.status(200).json({ success: true, data: user });
+});
+
+//@description UPDATE currently logged in user's password
+//@route PUT /api/v1/auth/updatepassword
+//@access private
+exports.updatePassword = asyncHandler(async (req, res, next) => {
+   const user = await User.findById(req.user.id).select('+password');
+
+   // check current password
+   if (!(await user.matchPassword(req.body.currentPassword))) {
+      return next(new ErrorResponse('Password is incorrect', 401));
+   }
+
+   user.password = req.body.newPassword;
+   user.save();
+
+   sendTokenResponse(user, 200, res);
 });

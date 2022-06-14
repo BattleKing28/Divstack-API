@@ -3,9 +3,10 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
-   name: {
+   userName: {
       type: String,
       required: [true, 'Please add name'],
+      unique: true,
    },
    role: {
       type: String,
@@ -18,6 +19,8 @@ const UserSchema = new mongoose.Schema({
       minlength: 6,
       select: false,
    },
+   resetPasswordToken: String,
+   resetPasswordExpire: Date,
    createdAt: {
       type: Date,
       default: Date.now,

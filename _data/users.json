@@ -1,76 +1,76 @@
 [
 	{
-		"name": "Admin Account",
+		"userName": "Admin Account",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "Publisher Account",
+		"userName": "Publisher Account",
 		"role": "publisher",
 		"password": "123456"
 	},
 	{
-		"name": "User Account",
+		"userName": "User Account",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "John Doe",
+		"userName": "John Doe",
 		"role": "publisher",
 		"password": "123456"
 	},
 	{
-		"name": "Kevin Smith",
+		"userName": "Kevin Smith",
 		"role": "publisher",
 		"password": "123456"
 	},
 	{
-		"name": "Mary Williams",
+		"userName": "Mary Williams",
 		"role": "publisher",
 		"password": "123456"
 	},
 	{
-		"name": "Sasha Ryan",
+		"userName": "Sasha Ryan",
 		"role": "publisher",
 		"password": "123456"
 	},
 	{
-		"name": "Greg Harris",
+		"userName": "Greg Harris",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "Derek Glover",
+		"userName": "Derek Glover",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "Stephanie Hanson",
+		"userName": "Stephanie Hanson",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "Jerry Wiliams",
+		"userName": "Jerry Wiliams",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "Maggie Johnson",
+		"userName": "Maggie Johnson",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "Barry Dickens",
+		"userName": "Barry Dickens",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "Ryan Bolin",
+		"userName": "Ryan Bolin",
 		"role": "user",
 		"password": "123456"
 	},
 	{
-		"name": "Sara Kensing",
+		"userName": "Sara Kensing",
 		"role": "user",
 		"password": "123456"
 	}

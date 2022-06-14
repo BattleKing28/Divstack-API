@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser'); //did not use cookie parser in ap
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
 const auth = require('./routes/auth');
+const admin_users = require('./routes/admin_users');
 
 //Load env file
 dotenv.config({ path: './configs/config.env' });
@@ -36,6 +37,7 @@ const PORT = process.env.PORT;
 app.use('/api/v1/bootcamps', bootcamps);
 app.use('/api/v1/courses', courses);
 app.use('/api/v1/auth', auth);
+app.use('/api/v1/users', admin_users);
 
 app.use(errorHandler);
 
