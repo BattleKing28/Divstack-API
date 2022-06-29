@@ -98,16 +98,29 @@ exports.createCourse = asyncHandler(async (req, res, next) => {
 //@route    PUT /api/v1/courses/:id
 //@access   private
 exports.updateCourse = asyncHandler(async (req, res, next) => {
-   const course = await Course.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-   });
+   let course = await Course.findById(req.params.id);
 
    if (!course) {
       return next(
          new ErrorResponse(`Course not found with id of ${req.params.id}`, 404)
       );
    }
+
+   //Validating the course owner
+   if (course.user.toString() !== req.user.id) {
+      return next(
+         new ErrorResponse(
+            `User id  ${req.user.id} is not authorized to update this course`,
+            404
+         )
+      );
+   }
+
+   course = await Course.findOneAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+   });
+
    res.status(200).json({ success: true, data: course });
 });
 
@@ -115,12 +128,25 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
 //@route    DELETE /api/v1/courses/:id
 //@access   private
 exports.deleteCourse = asyncHandler(async (req, res, next) => {
-   const course = await Course.findByIdAndDelete(req.params.id);
+   let course = await Course.findById(req.params.id);
 
    if (!course) {
       return next(
          new ErrorResponse(`Course not found with id of ${req.params.id}`, 404)
       );
    }
+
+   //Validating the course owner
+   if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+      return next(
+         new ErrorResponse(
+            `User id  ${req.user.id} is not authorized to delete this course`,
+            404
+         )
+      );
+   }
+
+   course = await Course.findOneAndDelete(req.params.id);
+
    res.status(200).json({ success: true, data: {} });
 });

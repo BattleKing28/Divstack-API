@@ -18,6 +18,6 @@ router
    .route('/:id')
    .get(getCourse)
    .put(protect, authorize('publisher'), updateCourse)
-   .delete(protect, authorize('admin'), deleteCourse);
+   .delete(protect, authorize('admin', 'publisher'), deleteCourse);
 
 module.exports = router;
