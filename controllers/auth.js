@@ -6,10 +6,11 @@ const asyncHandler = require('../middleware/async');
 //@route POST /api/v1/auth/register
 //@access public
 exports.register = asyncHandler(async (req, res, next) => {
-   const { userName, password, role } = req.body;
+   const { userName, email, password, role } = req.body;
 
    const user = await User.create({
       userName,
+      email,
       password,
       role,
    });
@@ -51,23 +52,16 @@ exports.login = asyncHandler(async (req, res, next) => {
    sendTokenResponse(user, 200, res);
 });
 
-//Get token from model , create a cookie and send response
-const sendTokenResponse = (user, statusCode, res) => {
-   //create a token
-   const token = user.getSignedJwtToken();
-
-   const options = {
-      expires: new Date(
-         Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
-      ),
+//@description Logout the user / clear cookies
+//@route GET /api/v1/auth/logout
+//@access private
+exports.logout = asyncHandler(async (req, res, next) => {
+   res.cookie('token', 'none', {
+      expires: new Date(Date.now() + 10 * 1000),
       httpOnly: true,
-   };
-
-   res.status(statusCode).cookie('token', token, options).json({
-      success: true,
-      token,
    });
-};
+   res.status(200).json({ success: true, data: {} });
+});
 
 //@description GET current logged in user token
 //@route GET /api/v1/auth/me
@@ -106,3 +100,44 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 
    sendTokenResponse(user, 200, res);
 });
+
+//@description Forgot password
+//@route POST /api/v1/auth/forgotpassword
+//@access public
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+   const user = await User.findOne({ email: req.body.email });
+
+   if (!user) {
+      return next(new ErrorResponse('There is no user with that email', 404));
+   }
+
+   //Get reset token
+   const resetToken = user.getResetPasswordToken();
+
+   await user.save({ validateBeforeSave: false });
+
+   console.log(resetToken);
+
+   res.status(200).json({
+      success: true,
+      data: user,
+   });
+});
+
+//Get token from model , create a cookie and send response
+const sendTokenResponse = (user, statusCode, res) => {
+   //create a token
+   const token = user.getSignedJwtToken();
+
+   const options = {
+      expires: new Date(
+         Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+      ),
+      httpOnly: true,
+   };
+
+   res.status(statusCode).cookie('token', token, options).json({
+      success: true,
+      token,
+   });
+};

@@ -68,11 +68,6 @@ const CourseSchema = new mongoose.Schema({
       type: String, //free or premium
       default: 'Free',
    },
-   user: {
-      type: mongoose.Schema.ObjectId,
-      ref: 'User',
-      required: true,
-   },
 });
 
 module.exports = mongoose.model('Course', CourseSchema);

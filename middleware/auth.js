@@ -18,7 +18,9 @@ exports.protect = asyncHandler(async (req, res, next) => {
 
    //checking if token exists
    if (!token) {
-      return next(new ErrorResponse('Protected route', 401));
+      return next(
+         new ErrorResponse('Not authorized to access this route', 401)
+      );
    }
 
    try {

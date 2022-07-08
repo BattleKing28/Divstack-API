@@ -4,6 +4,9 @@ const morgan = require('morgan');
 const colors = require('colors');
 const connectDB = require('./configs/db');
 const errorHandler = require('./middleware/error');
+const xss = require('xss-clean');
+const cors = require('cors');
+const mongoSanitize = require('express-mongo-sanitize');
 const cookieParser = require('cookie-parser'); //did not use cookie parser in app.use() thats why got undefined token error (proper error -  "error": "Cannot read property 'token' of undefined")
 
 //importing routes
@@ -25,6 +28,15 @@ app.use(express.json());
 
 //Cookie parser
 app.use(cookieParser());
+
+//sanitize data middleware to prevent nosql injection
+app.use(mongoSanitize());
+
+//preventing xss attacks
+app.use(xss());
+
+//Enable CORS
+app.use(cors());
 
 //dev logging middleware
 if (process.env.NODE_ENV === 'development') {
